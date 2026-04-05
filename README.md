@@ -49,4 +49,4 @@ Hebrew example:
 
 You can open the Settings UI by clicking on the extension icon or by visiting "Extension Options" from the extension manager or context menus.
 
-<img width="883" height="809" alt="image" src="https://github.com/user-attachments/assets/58ff5468-5186-464e-b1f5-ffa5444f3104" />
+<img width="894" height="899" alt="image" src="https://github.com/user-attachments/assets/83137602-1eee-42b0-82e9-d219feac47d9" />
