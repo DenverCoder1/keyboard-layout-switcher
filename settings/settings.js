@@ -16,10 +16,17 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 async function loadSettings() {
     const settings = await chrome.storage.sync.get(null);
+
+    // Build default shortcut entries from the layout definitions so adding a new
+    // built-in layout only requires updating layouts.js.
+    const shortcutDefaults = {};
+    for (const layoutId of getAvailableLayouts()) {
+        shortcutDefaults[`shortcut-${layoutId}`] = getDefaultShortcut(layoutId);
+    }
+
     const defaults = {
-        enabledLayouts: ["hebrew-english", "russian-english"],
-        "shortcut-hebrew-english": { ctrl: false, shift: true, alt: true, key: "H", direction: "auto" },
-        "shortcut-russian-english": { ctrl: false, shift: true, alt: true, key: "R", direction: "auto" },
+        enabledLayouts: getAvailableLayouts(),
+        ...shortcutDefaults,
         "shortcut-auto-switch": { ctrl: false, shift: true, alt: true, key: "A", direction: "auto" },
         customLayouts: {},
     };
@@ -104,13 +111,19 @@ function populateBuiltInLayouts() {
         title="Auto-detect direction">&#8596;</button>
       <div class="vertical-divider"></div>
       <div class="shortcut-input-group">
-        <label><input type="checkbox" id="shortcut-${layoutId}-ctrl" checked> Ctrl</label>
-        <label><input type="checkbox" id="shortcut-${layoutId}-shift" checked> Shift</label>
+        <label><input type="checkbox" id="shortcut-${layoutId}-ctrl"> Ctrl</label>
+        <label><input type="checkbox" id="shortcut-${layoutId}-shift"> Shift</label>
         <label><input type="checkbox" id="shortcut-${layoutId}-alt"> Alt</label>
-        <input type="text" id="shortcut-${layoutId}-key" maxlength="1" value="${layoutId === "hebrew-english" ? "1" : "2"}" placeholder="Key">
+        <input type="text" id="shortcut-${layoutId}-key" maxlength="1" placeholder="Key">
       </div>
     `;
 
+        // Apply default shortcut values from the layout definition
+        const defaultSc = config.defaultShortcut ?? {};
+        row.querySelector(`#shortcut-${layoutId}-ctrl`).checked = defaultSc.ctrl ?? false;
+        row.querySelector(`#shortcut-${layoutId}-shift`).checked = defaultSc.shift ?? false;
+        row.querySelector(`#shortcut-${layoutId}-alt`).checked = defaultSc.alt ?? false;
+        row.querySelector(`#shortcut-${layoutId}-key`).value = defaultSc.key ?? "";
         row.querySelector(`#layout-${layoutId}`).addEventListener("change", (e) => {
             row.classList.toggle("enabled", e.target.checked);
         });

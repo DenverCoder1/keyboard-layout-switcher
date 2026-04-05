@@ -2,6 +2,7 @@
 const KEYBOARD_LAYOUTS = {
     "hebrew-english": {
         name: "Hebrew ↔ English",
+        defaultShortcut: { ctrl: false, shift: true, alt: true, key: "H", direction: "auto" },
         layouts: {
             hebrew: {
                 chars: "/'קראטוןםפ][שדגכעיחלךף,זסבהנמצתץ.",
@@ -15,10 +16,25 @@ const KEYBOARD_LAYOUTS = {
     },
     "russian-english": {
         name: "Russian ↔ English",
+        defaultShortcut: { ctrl: false, shift: true, alt: true, key: "R", direction: "auto" },
         layouts: {
             russian: {
                 chars: "йцукенгшщзхъфывапролджэячсмитьбю.",
                 name: "Russian",
+            },
+            english: {
+                chars: "qwertyuiop[]asdfghjkl;'zxcvbnm,./",
+                name: "English",
+            },
+        },
+    },
+    "arabic-english": {
+        name: "Arabic ↔ English",
+        defaultShortcut: { ctrl: false, shift: true, alt: true, key: "E", direction: "auto" },
+        layouts: {
+            arabic: {
+                chars: "ضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ",
+                name: "Arabic",
             },
             english: {
                 chars: "qwertyuiop[]asdfghjkl;'zxcvbnm,./",
@@ -61,6 +77,15 @@ function createCharMapping(from, to) {
     }
 
     return mapping;
+}
+
+/**
+ * Get the default shortcut configuration for a built-in layout
+ * @param {string} layoutId - Layout identifier
+ * @returns {Object|null} Default shortcut config, or null if not a built-in layout
+ */
+function getDefaultShortcut(layoutId) {
+    return KEYBOARD_LAYOUTS[layoutId]?.defaultShortcut ?? null;
 }
 
 /**

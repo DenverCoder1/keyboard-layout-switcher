@@ -8,6 +8,7 @@ A Chrome extension that converts selected text between keyboard layouts using co
 
 - Hebrew ↔ English
 - Russian ↔ English
+- Arabic ↔ English
 - Custom layouts (add via settings)
 
 ## Installation
@@ -25,6 +26,7 @@ A Chrome extension that converts selected text between keyboard layouts using co
 
 - Hebrew ↔ English: `Alt + Shift + H`
 - Russian ↔ English: `Alt + Shift + R`
+- Arabic ↔ English: `Alt + Shift + E`
 - Auto-detect and switch: `Alt + Shift + A`
 
 Shortcuts can be changed in the extension settings.

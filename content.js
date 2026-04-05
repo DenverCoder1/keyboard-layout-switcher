@@ -267,11 +267,18 @@ async function onKeyDown(e) {
     try {
         // Get all settings from storage so custom layout shortcuts are included
         const stored = await chrome.storage.sync.get(null);
+
+        // Build default shortcut entries from the layout definitions so adding a new
+        // built-in layout only requires updating layouts.js.
+        const shortcutDefaults = {};
+        for (const layoutId of getAvailableLayouts()) {
+            shortcutDefaults[`shortcut-${layoutId}`] = getDefaultShortcut(layoutId);
+        }
+
         settings = {
-            "shortcut-hebrew-english": { ctrl: false, shift: true, alt: true, key: "H", direction: "auto" },
-            "shortcut-russian-english": { ctrl: false, shift: true, alt: true, key: "R", direction: "auto" },
+            ...shortcutDefaults,
             "shortcut-auto-switch": { ctrl: false, shift: true, alt: true, key: "A", direction: "auto" },
-            enabledLayouts: ["hebrew-english", "russian-english"],
+            enabledLayouts: getAvailableLayouts(),
             autoEnabled: true,
             customLayouts: {},
             ...stored,
@@ -283,38 +290,16 @@ async function onKeyDown(e) {
         return;
     }
 
-    // Check Hebrew-English shortcut
-    if (settings.enabledLayouts.includes("hebrew-english") && matchesShortcut(e, settings["shortcut-hebrew-english"])) {
-        dbg(
-            "onKeyDown(): matched hebrew-english shortcut, direction:",
-            settings["shortcut-hebrew-english"].direction || "auto",
-        );
-        e.preventDefault();
-        handleLayoutSwitch("hebrew-english", settings["shortcut-hebrew-english"].direction || "auto");
-        return;
-    }
-
-    // Check Russian-English shortcut
-    if (
-        settings.enabledLayouts.includes("russian-english") &&
-        matchesShortcut(e, settings["shortcut-russian-english"])
-    ) {
-        dbg(
-            "onKeyDown(): matched russian-english shortcut, direction:",
-            settings["shortcut-russian-english"].direction || "auto",
-        );
-        e.preventDefault();
-        handleLayoutSwitch("russian-english", settings["shortcut-russian-english"].direction || "auto");
-        return;
-    }
-
-    // Check custom layout shortcuts
+    // Register any custom layouts so they are available for conversion
     for (const [layoutId, config] of Object.entries(settings.customLayouts)) {
-        if (!settings.enabledLayouts.includes(layoutId)) continue;
         addCustomLayout(layoutId, config);
+    }
+
+    // Check all enabled layout shortcuts (built-in and custom) in a single loop
+    for (const layoutId of settings.enabledLayouts) {
         const sc = settings[`shortcut-${layoutId}`];
         if (sc && matchesShortcut(e, sc)) {
-            dbg(`onKeyDown(): matched custom layout shortcut: "${layoutId}", direction:`, sc.direction || "auto");
+            dbg(`onKeyDown(): matched layout shortcut: "${layoutId}", direction:`, sc.direction || "auto");
             e.preventDefault();
             handleLayoutSwitch(layoutId, sc.direction || "auto");
             return;
