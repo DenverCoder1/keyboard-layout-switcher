@@ -164,6 +164,7 @@ header h1 {
     transition:
         border-color 0.15s,
         background 0.15s;
+    filter: saturate(0);
 }
 
 /* Auto-detect row sits below the layout rows with spacing */
@@ -175,6 +176,7 @@ header h1 {
 .shortcut-item.enabled {
     border-color: #1976d2;
     background: #e8f0fe;
+    filter: saturate(1);
 }
 
 /* Checkbox that enables/disables a layout row */
@@ -519,7 +521,9 @@ header h1 {
     word-break: break-all;
     overflow-wrap: break-word;
     min-height: 52px;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition:
+        border-color 0.15s,
+        box-shadow 0.15s;
 }
 
 .chars-edit-field textarea:focus {

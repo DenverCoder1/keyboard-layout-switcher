@@ -40,6 +40,9 @@ async function loadSettings() {
             // Custom layouts are wrapped in a .custom-layout-card; built-ins use .shortcut-item directly.
             const container = checkbox.closest(".custom-layout-card") ?? checkbox.closest(".shortcut-item");
             container?.classList.add("enabled");
+            // Enable the shortcut inputs for this now-enabled layout
+            const row = document.getElementById(`layout-row-${layoutId}`);
+            if (row) setShortcutInputsDisabled(row, false);
         }
     });
 
@@ -52,6 +55,7 @@ async function loadSettings() {
     const autoEnabledChecked = merged["autoEnabled"] !== false;
     document.getElementById("autoEnabled").checked = autoEnabledChecked;
     document.getElementById("auto-switch-row").classList.toggle("enabled", autoEnabledChecked);
+    setShortcutInputsDisabled(document.getElementById("auto-switch-row"), !autoEnabledChecked);
 
     // Load custom layouts and restore their shortcuts
     if (Object.keys(merged.customLayouts).length > 0) {
@@ -124,8 +128,13 @@ function populateBuiltInLayouts() {
         row.querySelector(`#shortcut-${layoutId}-shift`).checked = defaultSc.shift ?? false;
         row.querySelector(`#shortcut-${layoutId}-alt`).checked = defaultSc.alt ?? false;
         row.querySelector(`#shortcut-${layoutId}-key`).value = defaultSc.key ?? "";
+
+        // Inputs start disabled until the layout is enabled
+        setShortcutInputsDisabled(row, true);
+
         row.querySelector(`#layout-${layoutId}`).addEventListener("change", (e) => {
             row.classList.toggle("enabled", e.target.checked);
+            setShortcutInputsDisabled(row, !e.target.checked);
         });
 
         const dirBtn = row.querySelector(`#shortcut-${layoutId}-direction`);
@@ -209,6 +218,17 @@ function applyDirectionUI(btn, strongLabel, helpLabel, direction) {
 }
 
 /**
+ * Enable or disable all shortcut inputs (modifiers, key field, direction button) within a row.
+ * @param {HTMLElement} row - The shortcut row or auto-switch row element
+ * @param {boolean} disabled
+ */
+function setShortcutInputsDisabled(row, disabled) {
+    row.querySelectorAll(".shortcut-input-group input, .direction-toggle").forEach((el) => {
+        el.disabled = disabled;
+    });
+}
+
+/**
  * Wire a key-capture listener onto a shortcut key text input.
  * Captures the raw key (e.g. "1", "a") from e.code regardless of Shift state.
  */
@@ -244,6 +264,7 @@ function setupEventListeners() {
     // Wire the auto-enabled checkbox
     document.getElementById("autoEnabled").addEventListener("change", (e) => {
         document.getElementById("auto-switch-row").classList.toggle("enabled", e.target.checked);
+        setShortcutInputsDisabled(document.getElementById("auto-switch-row"), !e.target.checked);
     });
 }
 
@@ -466,8 +487,12 @@ function displayCustomLayout(id, config) {
     card.appendChild(charsPanel);
 
     // ---- Enable checkbox - toggle enabled on the card ----
+    // Inputs start disabled until the layout is enabled
+    setShortcutInputsDisabled(row, true);
+
     row.querySelector(`#layout-${id}`).addEventListener("change", (e) => {
         card.classList.toggle("enabled", e.target.checked);
+        setShortcutInputsDisabled(row, !e.target.checked);
     });
 
     // ---- Direction toggle ----
