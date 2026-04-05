@@ -27,8 +27,17 @@ function getSelectionInfo() {
         const end = activeElement.selectionEnd;
         const text = activeElement.value.substring(start, end);
         if (!text) {
-            dbg("getSelectionInfo(): no text selected in", activeElement.tagName);
-            return null;
+            // No selection - fall back to the entire field value
+            const fullText = activeElement.value;
+            if (!fullText) {
+                dbg("getSelectionInfo(): no text and field is empty in", activeElement.tagName);
+                return null;
+            }
+            // Expand the selection to the whole field so replaceSelectedText replaces it all
+            activeElement.selectionStart = 0;
+            activeElement.selectionEnd = fullText.length;
+            dbg(`getSelectionInfo(): no selection, using full ${activeElement.tagName} value: "${fullText}"`);
+            return { text: fullText, range: null, selection: null };
         }
         dbg(`getSelectionInfo(): ${activeElement.tagName} selection [${start}..${end}]: "${text}"`);
         return { text, range: null, selection: null };
