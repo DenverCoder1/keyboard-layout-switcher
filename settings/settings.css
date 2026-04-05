@@ -212,21 +212,13 @@ header h1 {
     margin-bottom: 0;
 }
 
-/* Custom layout card wrapper – provides spacing & the left accent border */
+/* Custom layout card wrapper – provides spacing for the row + chars panel */
 .custom-layout-card {
-    border-left: 3px solid #adb5bd;
-    border-radius: 0 4px 4px 0;
     margin-bottom: 12px;
 }
 
-.custom-layout-card.enabled {
-    border-left-color: #1976d2;
-}
-
-/* The row inside a card has no individual border */
+/* The row inside a card matches built-in shortcut row styling */
 .custom-layout-card .custom-layout-row {
-    border-left: none;
-    border-radius: 0 4px 0 0;
     margin-bottom: 0;
 }
 

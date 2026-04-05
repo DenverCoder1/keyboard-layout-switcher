@@ -42,7 +42,10 @@ async function loadSettings() {
             container?.classList.add("enabled");
             // Enable the shortcut inputs for this now-enabled layout
             const row = document.getElementById(`layout-row-${layoutId}`);
-            if (row) setShortcutInputsDisabled(row, false);
+            if (row) {
+                row.classList.add("enabled");
+                setShortcutInputsDisabled(row, false);
+            }
         }
     });
 
@@ -61,7 +64,7 @@ async function loadSettings() {
     if (Object.keys(merged.customLayouts).length > 0) {
         Object.entries(merged.customLayouts).forEach(([id, config]) => {
             addCustomLayout(id, config);
-            displayCustomLayout(id, config);
+            displayCustomLayout(id, config, merged.enabledLayouts.includes(id));
             // Restore saved shortcut for this custom layout if present
             const sc = merged[`shortcut-${id}`];
             if (sc) {
@@ -388,8 +391,14 @@ async function handleAddCustomLayout() {
     // Add to global layouts
     addCustomLayout(id, config);
 
-    // Add to UI
-    displayCustomLayout(id, config);
+    // Mark the new layout as enabled in storage
+    const allSettings = await chrome.storage.sync.get(["enabledLayouts"]);
+    const enabledLayouts = allSettings.enabledLayouts || [];
+    if (!enabledLayouts.includes(id)) enabledLayouts.push(id);
+    await chrome.storage.sync.set({ enabledLayouts });
+
+    // Add to UI (enabled from the start)
+    displayCustomLayout(id, config, true);
 
     // Add a Live Test button for the new layout (no shortcut label yet).
     createTestButton(id, config, "");
@@ -403,8 +412,9 @@ async function handleAddCustomLayout() {
 
 /**
  * Display a custom layout as a full layout row in the shortcuts container.
+ * @param {boolean} [initialEnabled=false] When true, the row starts checked and enabled.
  */
-function displayCustomLayout(id, config) {
+function displayCustomLayout(id, config, initialEnabled = false) {
     if (document.getElementById(`layout-row-${id}`)) return;
 
     const configLayouts = config?.layouts;
@@ -487,11 +497,19 @@ function displayCustomLayout(id, config) {
     card.appendChild(charsPanel);
 
     // ---- Enable checkbox - toggle enabled on the card ----
-    // Inputs start disabled until the layout is enabled
-    setShortcutInputsDisabled(row, true);
+    const enableCheckbox = row.querySelector(`#layout-${id}`);
+    if (initialEnabled) {
+        enableCheckbox.checked = true;
+        card.classList.add("enabled");
+        row.classList.add("enabled");
+        setShortcutInputsDisabled(row, false);
+    } else {
+        setShortcutInputsDisabled(row, true);
+    }
 
-    row.querySelector(`#layout-${id}`).addEventListener("change", (e) => {
+    enableCheckbox.addEventListener("change", (e) => {
         card.classList.toggle("enabled", e.target.checked);
+        row.classList.toggle("enabled", e.target.checked);
         setShortcutInputsDisabled(row, !e.target.checked);
     });
 
