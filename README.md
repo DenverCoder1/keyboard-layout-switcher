@@ -2,7 +2,7 @@
 
 A Chrome extension that converts selected text between keyboard layouts using configurable shortcuts. Useful for when you accidentally type in the wrong keyboard layout.
 
-![keyboard-locale-switcher](https://github.com/user-attachments/assets/4845d1d7-40e4-4643-ae06-bb6583c19ce8)
+![keyboard-layout-switcher](https://github.com/user-attachments/assets/80aab71f-4076-4e70-a962-d02c453abae7)
 
 ## Supported Layouts
 
