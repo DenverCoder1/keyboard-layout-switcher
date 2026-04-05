@@ -124,7 +124,7 @@ function convertText(text, layoutId, direction = "auto") {
         console.error("Layout not found:", layoutId);
         return text;
     }
-    dbg("convertText(): layout config found:", layoutConfig.name);
+    dbg("convertText(): layout config found:", layoutConfig);
 
     const layoutKeys = Object.keys(layoutConfig.layouts);
     let fromLayout, toLayout;

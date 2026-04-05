@@ -102,7 +102,7 @@ function populateBuiltInLayouts() {
         <input type="checkbox" id="layout-${layoutId}" value="${layoutId}">
       </label>
       <div class="layout-label-block">
-        <strong id="shortcut-${layoutId}-label">${config.name}</strong>
+        <strong id="shortcut-${layoutId}-label">${layout1Name} ↔ ${layout2Name}</strong>
         <span class="help-text" id="shortcut-${layoutId}-helplabel">Auto-detects direction</span>
       </div>
       <button type="button" class="direction-toggle" id="shortcut-${layoutId}-direction"
@@ -416,7 +416,7 @@ function displayCustomLayout(id, config) {
       <input type="checkbox" id="layout-${id}" value="${id}">
     </label>
     <div class="layout-label-block">
-      <span class="layout-name" id="shortcut-${id}-label">${config.name}</span>
+      <span class="layout-name" id="shortcut-${id}-label">${layout1Name} ↔ ${layout2Name}</span>
       <span class="help-text" id="shortcut-${id}-helplabel">Auto-detects direction</span>
       <div class="layout-rename-row" style="display:none">
         <input type="text" class="layout-name-input-1" value="${layout1Name}" placeholder="Layout 1 name">
@@ -556,11 +556,10 @@ function displayCustomLayout(id, config) {
             config.layouts[keys[1]].name = newName2;
             config.layouts[keys[1]].chars = newChars2;
         }
-        config.name = `${newName1} \u2194 ${newName2}`;
         addCustomLayout(id, config);
 
         // Update DOM
-        nameSpan.textContent = config.name;
+        nameSpan.textContent = `${newName1} ↔ ${newName2}`;
         dirBtn.dataset.name1 = newName1;
         dirBtn.dataset.name2 = newName2;
         applyDirectionUI(dirBtn, strongLabel, helpLabel, dirBtn.dataset.direction);
@@ -575,7 +574,6 @@ function displayCustomLayout(id, config) {
         const stored = await chrome.storage.sync.get(["customLayouts"]);
         const customLayouts = stored.customLayouts || {};
         if (customLayouts[id]) {
-            customLayouts[id].name = config.name;
             if (customLayouts[id].layouts[keys[0]]) {
                 customLayouts[id].layouts[keys[0]].name = newName1;
                 customLayouts[id].layouts[keys[0]].chars = newChars1;
@@ -704,8 +702,7 @@ function getDirectionalLabel(config, direction) {
     const name2 = entry1.name;
     if (direction === "forward") return `${name1} → ${name2}`;
     if (direction === "reverse") return `${name2} → ${name1}`;
-    // Use config.name for auto - it's already "X ↔ Y" and stays current after rename.
-    return config.name;
+    return `${name1} ↔ ${name2}`;
 }
 
 async function populateTestSection() {
@@ -754,7 +751,7 @@ async function populateTestSection() {
             const detected = detectLayout(source, config);
             if (detected) {
                 converted = convertText(source, layoutId, "auto");
-                usedLayout = config.name;
+                usedLayout = getDirectionalLabel(config, "auto");
                 break;
             }
         }

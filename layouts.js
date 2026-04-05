@@ -1,7 +1,6 @@
 // Keyboard layout mappings
 const KEYBOARD_LAYOUTS = {
     "hebrew-english": {
-        name: "Hebrew ↔ English",
         defaultShortcut: { ctrl: false, shift: true, alt: true, key: "H", direction: "auto" },
         layouts: {
             hebrew: {
@@ -15,7 +14,6 @@ const KEYBOARD_LAYOUTS = {
         },
     },
     "russian-english": {
-        name: "Russian ↔ English",
         defaultShortcut: { ctrl: false, shift: true, alt: true, key: "R", direction: "auto" },
         layouts: {
             russian: {
@@ -29,7 +27,6 @@ const KEYBOARD_LAYOUTS = {
         },
     },
     "arabic-english": {
-        name: "Arabic ↔ English",
         defaultShortcut: { ctrl: false, shift: true, alt: true, key: "E", direction: "auto" },
         layouts: {
             arabic: {

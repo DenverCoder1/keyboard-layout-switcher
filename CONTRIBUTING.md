@@ -31,7 +31,6 @@ Add an entry to the `KEYBOARD_LAYOUTS` object:
 
 ```javascript
 "french-english": {
-    name: "French ↔ English",
     defaultShortcut: { ctrl: false, shift: true, alt: true, key: "F", direction: "auto" },
     layouts: {
         french: {
