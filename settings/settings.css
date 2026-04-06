@@ -164,7 +164,6 @@ header h1 {
     transition:
         border-color 0.15s,
         background 0.15s;
-    filter: saturate(0);
 }
 
 /* Auto-detect row sits below the layout rows with spacing */
@@ -176,6 +175,16 @@ header h1 {
 .shortcut-item.enabled {
     border-color: #1976d2;
     background: #e8f0fe;
+}
+
+/* Desaturate only the shortcut controls when the row is disabled */
+.shortcut-item .shortcut-input-group,
+.shortcut-item .direction-toggle {
+    filter: saturate(0);
+}
+
+.shortcut-item.enabled .shortcut-input-group,
+.shortcut-item.enabled .direction-toggle {
     filter: saturate(1);
 }
 
